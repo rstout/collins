@@ -39,10 +39,10 @@ There are a few user interface elements to note:
     To move within a row, use horizontal scroll.
 
     Single click on an asset opens up collins page for that asset (currently
-    just opens collins in a new tab).
+    just opens collins docs in a new tab).
 
-    Double click on an asset starts the IPMI Identify function (currently just
-    makes the asset blink on the static page).
+    Holding mouse down for 1 second on an asset starts the IPMI Identify
+    function (currently just triggers an alert).
 
 Other suggested UI elements include:
 
