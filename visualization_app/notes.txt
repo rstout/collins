@@ -1,0 +1,49 @@
+This is the front end of a tool that will show the status of the individual
+boxes while showing the layout of the datacenter.
+
+The css elements used are:
+
+    control_container and control - A panel that will contain the control
+    elements for the tool.
+
+    contain_rows: Contains all of the elements that represent the datacenter.
+
+    datacenter_rows: Rows in the datacenter, 4 rows at the moment. Contains 
+    racks.
+
+    racks: Containing chasses. 10 racks per row. Shows rack number above
+    chasses.
+
+    chassis: Containing nodes and powerelems. 18 chasses per racks.
+
+    powerelem: Element to indicate where the power supply is in the chassis for
+    orientation. 2 powerelem per chassis. May show U height.
+
+    node: Element to represent node. 4 nodes per chassis. May show asset number.
+    Please refer to html to understand node numbering. Nodes are color-coded to
+    show status:
+        Blue - Unallocated
+        Green - New
+        Yellow - Incomplete
+        Red - Not Found
+        Grey - Everything else
+
+There are a few user interface elements to note:
+
+    To move from row to row, use vertical scroll (within the invisible
+    contain_rows).
+
+    To move within a row, use horizontal scroll.
+
+    Single click on an asset opens up collins page for that asset (currently
+    just opens collins in a new tab).
+
+    Double click on an asset starts the IPMI Identify function (currently just
+    makes the asset blink on the static page).
+
+Other suggested UI elements include:
+
+    A refresh button (if the page ends up being static)
+
+    A toggle to grey for all elements of a certain type (ie. I only want to see
+    the Incomplete elements)
