@@ -1,125 +1,121 @@
-<style type="text/css">
-
 .control_container{
     display:block;
     width:12%;
-    height: 95%;
-    margin: 10px;
-    padding: 15px 20px 15px 20px;
-    border-bottom: solid 2px #bbb;
+    height:95%;
+    margin:10px;
+    padding:15px 20px 15px 20px;
+    border-bottom:solid 2px #bbb;
     background-color:#FFFFFF;
-    border-radius: 10px;
-    font-family: Sans-Serif;
-    font-size: 16px;
-    text-align: center;
-    white-space: nowrap;
-    float: left;
+    border-radius:10px;
+    font-family:Sans-Serif;
+    font-size:16px;
+    text-align:center;
+    white-space:nowrap;
+    float:left;
 }
 
 .control{
-    background: #e7eaec;
-    height: 90%;
-    border-radius: 8px;
-    padding: 15px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    width: 80%;
-    display: inline-block;
+    background:#e7eaec;
+    height:90%;
+    border-radius:8px;
+    padding:15px;
+    margin-top:10px;
+    margin-bottom:10px;
+    width:80%;
+    display:inline-block;
 }
 
 
 .contain_rows{
-    height: 100%;
-    width: 80%;
-    border-radius: 10px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    margin: 10px;
-    display: inline-block;
+    height:100%;
+    width:80%;
+    border-radius:10px;
+    overflow-x:hidden;
+    overflow-y:scroll;
+    margin:10px;
+    display:inline-block;
 }
 
 .datacenter_rows{
     display:block;
     height:1030;
-    margin-bottom: 20px;
-    padding: 15px 20px 15px 20px;
-    border-bottom: solid 2px #bbb;
+    margin-bottom:20px;
+    padding:15px 20px 15px 20px;
+    border-bottom:solid 2px #bbb;
     background-color:#FFFFFF;
-    border-radius: 10px;
-    font-family: Sans-Serif;
-    font-size: 16px;
-    color: white;
-    text-align: center;
-    overflow-x: scroll;
-    overflow-y: hidden;
-    white-space: nowrap;
-    color: #454e54;
+    border-radius:10px;
+    font-family:Sans-Serif;
+    font-size:16px;
+    color:white;
+    text-align:center;
+    overflow-x:scroll;
+    overflow-y:hidden;
+    white-space:nowrap;
+    color:#454e54;
 }
 
 
 .racks{
-    background: #e7eaec;
-    border-radius: 8px;
-    padding: 15px 15px;
-    width: 230px;
-    height: 980px;
-    margin-right: 10px;
-    margin-top: 10px;
-    display: inline-block;
+    background:#e7eaec;
+    border-radius:8px;
+    padding:15px 15px;
+    width:230px;
+    height:980px;
+    margin-right:10px;
+    margin-top:10px;
+    display:inline-block;
 }
 
 
 .chassis {
     display:block;
-    width: 230px;
-    height: 45px;
-    margin-top: 8px;
-    color: white;
+    width:230px;
+    height:45px;
+    margin-top:8px;
+    color:white;
 }
 
 .node{    
     display:block;
-    width: 100px;
-    height: 20px;
-    margin: 2px 1px 2px 1px;
-    float: left;
+    width:100px;
+    height:20px;
+    margin:2px 1px 2px 1px;
+    float:left;
 }
 
 .powerelem {
-    display: block;
-    width: 20px;
-    height: 20px;
-    margin: 2px;
-    float: left;
-    color: white;
+    display:block;
+    width:20px;
+    height:20px;
+    margin:2px;
+    float:left;
+    color:white;
 }
 
 .node:hover {
-    opacity: 0.5;
+    opacity:0.5;
 }
 
 .grey {    
-    background: #454e54;
+    background:#454e54;
 }
 
 .yellow {
-    background: #D29636;
+    background:#D29636;
 }
 
 .purple {
-    background: #A265CC;
+    background:#A265CC;
 }
 
 .green {
-    background: #0DD488;
+    background:#0DD488;
 }
 
 .red {
-    background: #D83D09;
+    background:#D83D09;
 }
 
 .blue {
-    background: #5992EC;
+    background:#5992EC;
 }
-
-</style>

@@ -27,6 +27,9 @@ The css elements used are:
         Yellow - Incomplete
         Red - Not Found
         Grey - Everything else
+    In order to keep everything rendering correctly, if a node isn't found
+    then a node should still be rendered but without a status color. It will
+    show up as a hole that way, and the hole will be in the right spot.
 
 There are a few user interface elements to note:
 
