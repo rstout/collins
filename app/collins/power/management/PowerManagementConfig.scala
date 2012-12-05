@@ -19,9 +19,10 @@ object PowerManagementConfig extends Configurable {
   val RebootSoftKey = "rebootSoft"
   val VerifyKey = "verify"
   val IdentifyKey = "identify"
+  val SysEventLogKey = "sysEventLog"
   val RequiredKeys: Set[String] = Set(
     PowerOffKey, PowerOnKey, PowerSoftKey, PowerStateKey, RebootHardKey, RebootSoftKey, VerifyKey,
-    IdentifyKey
+    IdentifyKey, SysEventLogKey
   )
 
   object Messages extends MessageHelper(namespace) {
@@ -58,6 +59,7 @@ object PowerManagementConfig extends Configurable {
   def rebootSoftCommand = command(RebootSoftKey)
   def verifyCommand = command(VerifyKey)
   def identifyCommand = command(IdentifyKey)
+  def sysEventLogCommand = command(SysEventLogKey)
 
   protected def command(cmd: String): String = getString("commands.%s".format(cmd))(ConfigValue.Required).get
 

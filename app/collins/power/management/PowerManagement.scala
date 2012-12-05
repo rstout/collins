@@ -28,4 +28,5 @@ trait PowerManagement {
   def rebootSoft(e: Asset): PowerStatus
   def verify(e: Asset): PowerStatus
   def identify(e: Asset): PowerStatus
+  def sysEventLog(e: Asset): PowerStatus
 }

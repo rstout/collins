@@ -63,6 +63,8 @@ module Collins
           "verify"
         when :identify
           "identify"
+        when :sysEventLog
+          "sysEventLog"
         else
           raise InvalidPowerStatus.new("#{action} is not a valid power status")
         end

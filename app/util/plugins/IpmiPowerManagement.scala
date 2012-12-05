@@ -34,6 +34,7 @@ object IpmiPowerCommand {
     case RebootHard => PMC.rebootHardCommand
     case Verify => PMC.verifyCommand
     case Identify => PMC.identifyCommand
+    case SysEventLog => PMC.sysEventLogCommand
   }
 
   private def ipmiErr(a: Asset) =
@@ -75,6 +76,7 @@ class IpmiPowerManagement(app: Application) extends Plugin with PowerManagement 
   def rebootSoft(e: Asset): PowerStatus = run(e, RebootSoft)
   def identify(e: Asset): PowerStatus = run(e, Identify)
   def verify(e: Asset): PowerStatus = run(e, Verify)
+  def sysEventLog(e: Asset): PowerStatus = run(e, SysEventLog)
 
   protected[this] def run(e: Asset, action: PowerAction): PowerStatus = pool {
     IpmiPowerCommand.fromPowerAction(getAsset(e), action).run() match {

@@ -21,6 +21,9 @@ case object Identify extends ChassisInfo {
 case object Verify extends ChassisInfo {
   override def toString: String = "Verify"
 }
+case object SysEventLog extends ChassisInfo {
+  override def toString: String = "SysEventLog"
+}
 
 sealed trait Reboot extends PowerAction
 case object RebootSoft extends Reboot {
@@ -39,6 +42,7 @@ object PowerAction {
   def rebootHard() = RebootHard
   def verify() = Verify
   def identify() = Identify
+  def sysEventlog() = SysEventLog
   def apply(s: String): PowerAction = unapply(s) match {
     case Some(p) => p
     case None => throw new MatchError("No such power action " + s)
@@ -52,6 +56,7 @@ object PowerAction {
     case r if state().toString.toLowerCase == r => Some(state())
     case r if identify().toString.toLowerCase == r => Some(identify())
     case r if verify().toString.toLowerCase == r => Some(verify())
+    case r if sysEventlog().toString.toLowerCase == r => Some(sysEventlog())
     case _ => None
   }
 }
