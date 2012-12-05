@@ -28,7 +28,7 @@ describe Collins::Power do
 
     it "Verify" do example.description.should have_power_action "verify" end
     it "Identify" do example.description.should have_power_action "identify" end
-    it "SysEventLog" do example.description.should_have_power_action "sysEventLog" end
+    it "SysEventLog" do example.description.should have_power_action "sysEventLog" end
   end
 
   it "#keys" do
