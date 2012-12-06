@@ -113,6 +113,10 @@ class SoftLayerPlugin(app: Application) extends Plugin with SoftLayer {
   override def identify(e: Asset): PowerStatus = {
     Future.value(Failure("identify not implemented for softlayer"))
   }
+  
+  override def sysEventLog(e: Asset): PowerStatus = {
+    Future.value(Failure("sysEventLog not implemented for softlayer"))
+  }
 
   override def activateServer(id: Long): Future[Boolean] = {
     val url = softLayerUrl("/SoftLayer_Hardware_Server/%d/sparePool.json".format(id))
