@@ -57,6 +57,9 @@ INSERT INTO asset_meta VALUES (30, 'LLDP_VLAN_ID', -1, 'LLDP VLAN ID', 'VLAN ID 
 INSERT INTO asset_meta VALUES (31, 'LLDP_VLAN_NAME', -1, 'LLDP VLANE Name', 'VLAN name reported by lldpctl');
 INSERT INTO asset_meta VALUES (32, 'INTERFACE_NAME', -1, 'Interface Name', 'Name of physical interface, e.g. eth0');
 INSERT INTO asset_meta VALUES (33, 'INTERFACE_ADDRESS', 0, 'IP Address', 'Address on interface, e.g. 10.0.0.1');
+INSERT INTO asset_meta VALUES (34, 'DATACENTER', 1, 'Datacenter', 'Datacenter this host resides in');
+INSERT INTO asset_meta VALUES (35, 'CAGE', 1, 'Cage', 'DC Cage this host resides in');
+INSERT INTO asset_meta VALUES (36, 'CABINET', 1, 'Cabinet', 'Host Cabinet');
 
 INSERT INTO asset VALUES (1, 'tumblrtag1', 7, 1, CURRENT_TIMESTAMP, null, null);
 

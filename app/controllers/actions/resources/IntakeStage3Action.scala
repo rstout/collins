@@ -4,7 +4,8 @@ package resources
 
 import asset.ActionAttributeHelper
 import models.AssetLifecycle
-import models.AssetMeta.Enum.{ChassisTag, RackPosition}
+import models.AssetMeta.Enum.{ChassisTag, RackPosition, Datacenter, Cage, Cabinet, IntakeVars}
+import collins.intake.IntakeConfig
 import util.MessageHelperI
 import util.security.SecuritySpecification
 import util.power.{InvalidPowerConfigurationException, PowerUnits}
@@ -17,13 +18,29 @@ import java.util.concurrent.atomic.AtomicReference
 import scala.util.control.Exception.allCatch
 
 trait IntakeStage3Form extends ParamValidation {
-  type DataForm = Tuple2[
-    String,              // chassis tag
-    String               // rack position
-  ]
+  val dataFormLength = IntakeVars.count(_)
+
+  val intakeCustomFields = IntakeConfig.variables
+
+
+
+  // Read http://www.playframework.com/documentation/2.0/ScalaForms
+  // ...for info on how to not use a Tuple for this
+  type DataForm = (
+    String, // chassis tag
+    String, // rack position
+    String, // Data center
+    String, // Cage
+    String // Cabinet
+   )
+
+
   val dataForm = Form(tuple(
     ChassisTag.toString -> validatedText(1),
-    RackPosition.toString -> validatedText(1)
+    RackPosition.toString -> validatedText(1),
+    Datacenter.toString -> validatedText(1),
+    Cage.toString -> validatedText(1),
+    Cabinet.toString -> validatedText(1)
   ))
   def formFromChassisTag(tag: String) = dataForm.bind(Map(
     ChassisTag.toString -> tag
@@ -44,9 +61,20 @@ case class IntakeStage3Action(
   protected val form = new AtomicReference[Form[DataForm]](dataForm)
 
   case object ActionError extends RequestDataHolder
+  case class IntakeDataHolder(
+    chassisTag: String,
+    rackPosition: String,
+    customFieldMap: Map[String, String],
+    powerMap: Map[String, String]
+  ) extends RequestDataHolder
+
   case class ActionDataHolder(
     chassisTag: String,
     rackPosition: String,
+    datacenter: String,
+    cage: String,
+    cabinet: String,
+
     powerMap: Map[String,String]
   ) extends RequestDataHolder
 
@@ -59,9 +87,12 @@ case class IntakeStage3Action(
       if (boundForm.hasErrors)
         Left(ActionError)
       else {
-        val (chassisTag, rackPosition) = boundForm.get
+        val (chassisTag, rackPosition, datacenter, cage, cabinet) = boundForm.get
         verifyChassisTag(chassisTag) match {
-          case Right(ctag) => validate(ctag, rackPosition)
+          case Right(cleanChassisTag) => {
+            // validate(cleanChassisTag, rackPosition, datacenter, cage, cabinet)
+            validateIntakeFields(cleanChassisTag, rackPosition)
+          }
           case Left(rdh) => updateFormErrors(rdh.toString)
         }
       }
@@ -69,12 +100,21 @@ case class IntakeStage3Action(
   }
 
   override def execute(rd: RequestDataHolder) = rd match {
-    case ActionDataHolder(chassisTag, rackPosition, powerMap) =>
+    case ActionDataHolder(chassisTag, rackPosition, datacenter, cage, cabinet, powerMap) => {
       val basicMap = Map(
         ChassisTag.toString -> chassisTag,
-        RackPosition.toString -> rackPosition
+        RackPosition.toString -> rackPosition,
+        Datacenter.toString -> datacenter,
+        Cage.toString -> cage,
+        Cabinet.toString -> cabinet
       )
-      val updateMap = basicMap ++ powerMap
+      val customFields = Seq("Datacenter", "Cage", "Cabinet")
+      val customFieldsMap = customFields.map({
+        (fieldName) => {
+          fieldName -> rd.string(fieldName, "")
+        }
+      })
+      val updateMap = basicMap ++ powerMap ++ customFieldsMap
       AssetLifecycle.updateAsset(definedAsset, updateMap) match {
         case Left(error) =>
           handleError(RequestDataHolder.error400(error.getMessage))
@@ -87,6 +127,29 @@ case class IntakeStage3Action(
             rootMessage("asset.intake.failed", definedAsset.tag)
           ))
       }
+    }
+    case IntakeDataHolder(chassisTag, rackPosition, customFieldMap, powerMap) => {
+      val basicMap = Map(
+        ChassisTag.toString -> chassisTag,
+        RackPosition.toString -> rackPosition
+      )
+
+      val updateMap = basicMap ++ customFieldMap ++ powerMap
+      // Asset Lifecycle business
+      AssetLifecycle.updateAsset(definedAsset, updateMap) match {
+
+        case Left(error) =>
+          handleError(RequestDataHolder.error400(error.getMessage))
+        case Right(ok) if ok =>
+          Redirect(app.routes.Resources.index).flashing(
+             "success" -> rootMessage("asset.intake.success", definedAsset.tag)
+          )
+        case Right(ok) if !ok =>
+          handleError(RequestDataHolder.error400(
+            rootMessage("asset.intake.failed", definedAsset.tag)
+          ))
+      }
+    }
   }
 
   override def handleWebError(rd: RequestDataHolder) = rd match {
@@ -97,15 +160,33 @@ case class IntakeStage3Action(
       Some(Status.Ok(Stage3Template(definedAsset, form.get)(flash, request)))
   }
 
-  protected def validate(chassisTag: String, rackPosition: String): Validation = try {
+  protected def validate(chassisTag: String, rackPosition: String, datacenter: String, cage: String, cabinet: String): Validation = try {
     val pmap = PowerUnits.unitMapFromMap(getInputMap)
     PowerUnits.validateMap(pmap)
-    Right(ActionDataHolder(chassisTag, cleanString(rackPosition).get, pmap))
+    Right(ActionDataHolder(chassisTag, cleanString(rackPosition).get, datacenter, cage, cabinet, pmap))
   } catch {
     case InvalidPowerConfigurationException(message, Some(key)) =>
       updateFormErrors(message, key)
     case error =>
       updateFormErrors(error.getMessage)
+  }
+
+  private def validateIntakeFields(chassisTag: String, rackPosition: String): Either[RequestDataHolder,RequestDataHolder] = {
+    val pmap = PowerUnits.unitMapFromMap(getInputMap)
+    PowerUnits.validateMap(pmap)
+    val rp = cleanString(rackPosition).get
+
+    Right(IntakeDataHolder(chassisTag, rp, extractFieldValuesFromRequest(), pmap))
+  }
+
+
+  private def extractFieldValuesFromRequest(): Map[String, String] = {
+    // Extract the values for the custom fields from the request
+    val customFieldValues = intakeCustomFields.map((fieldName: String) => {
+      val formValue = request().queryString(fieldName).mkString
+          fieldName -> formValue
+    }).toMap
+    customFieldValues
   }
 
   private def updateFormErrors(message: String, key: String = "") = {

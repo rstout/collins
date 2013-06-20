@@ -187,6 +187,16 @@ object AssetMeta extends Schema with AnormAdapter[AssetMeta] {
     val NicName = Value(32, "INTERFACE_NAME")
     // DO NOT USE - Deprecated
     val NicAddress = Value(33, "INTERFACE_ADDRESS")
+
+    val Datacenter = Value(34, "Datacenter")
+    val Cage = Value(35, "Cage")
+    val Cabinet = Value(36, "Cabinet")
+
+    val IntakeVars = Map(
+        ("Datacenter" -> Value(37, "Datacenter")),
+        ("Cage" -> Value(38, "Cage")),
+        ("Cabinet" -> Value(39, "Cabinet"))
+    )
   }
 
   // Post enum fields, enum is not safe to extend with new values
