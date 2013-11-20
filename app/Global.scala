@@ -1,9 +1,10 @@
-import play.api._
-import play.api.mvc._
+// No package name for Global class with play?
 
 import controllers.ApiResponse
-import util.{CryptoAccessor, Stats}
-import util.{BashOutput, HtmlOutput, JsonOutput, OutputType, TextOutput}
+import play.api._
+import play.api.mvc._
+import scala.Some
+import util._
 import util.config.CryptoConfig
 import util.security.{AuthenticationAccessor, AuthenticationProvider, AuthenticationProviderConfig}
 
@@ -11,6 +12,7 @@ object Global extends GlobalSettings with AuthenticationAccessor with CryptoAcce
   private[this] val logger = Logger.logger
 
   override def onStart(app: Application) {
+
     val auth = AuthenticationProvider.get(AuthenticationProviderConfig.authType)
     val key = CryptoConfig.key
     setAuthentication(auth)
