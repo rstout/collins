@@ -29,6 +29,7 @@ import AssetMeta.ValueType
 import AssetMeta.ValueType._
 
 import CollinsQueryDSL._
+import Solr.AssetSolrDocument
 
 class SolrPlugin(app: Application) extends Plugin {
 
@@ -75,9 +76,9 @@ class SolrPlugin(app: Application) extends Plugin {
 
   private def setupServer() {
     val server = if (SolrConfig.useEmbeddedServer) {
-      Solr.getNewEmbeddedServer(SolrConfig.embeddedSolrHome)
+      Solr.getNewEmbeddedServer
     } else {
-      Solr.getNewRemoteServer(SolrConfig.externalUrl.get)
+      Solr.getNewRemoteServer
     }
     _server = Some(server)
   }
@@ -127,7 +128,7 @@ class SolrPlugin(app: Application) extends Plugin {
 
   def updateItems[T](items: Seq[T], serializer: SolrSerializer[T], indexTime: Date, commit: Boolean = true) {
     _server.map{server =>
-      val docs = items.map{item => Solr.prepForInsertion(serializer.serialize(item, indexTime))}
+      val docs = items.map{item => prepForInsertion(serializer.serialize(item, indexTime))}
       if (docs.size > 0) {
         val fuckingJava = new java.util.ArrayList[SolrInputDocument]
         docs.foreach{doc => fuckingJava.add(doc)}
@@ -135,7 +136,7 @@ class SolrPlugin(app: Application) extends Plugin {
         if (commit) {
           server.commit()
           if (items.size == 1) {
-            logger.debug(("Re-indexing %s, %s".format(serializer.docType.name, items.head.toString)))
+            logger.debug(("Indexed %s: %s".format(serializer.docType.name, items.head.toString)))
           } else {
             logger.info("Indexed %d %ss".format(docs.size, serializer.docType.name))
           }
@@ -159,4 +160,9 @@ class SolrPlugin(app: Application) extends Plugin {
     _server.foreach{case s: EmbeddedSolrServer => s.shutdown}
   }
 
+  def prepForInsertion(typedMap: AssetSolrDocument): SolrInputDocument = {
+    val input = new SolrInputDocument
+    typedMap.foreach{case(key,value) => input.addField(key.resolvedName,value.value)}
+    input
+  }
 }

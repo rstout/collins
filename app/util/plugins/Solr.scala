@@ -38,17 +38,12 @@ object Solr {
   //TODO: Rename
   type AssetSolrDocument = Map[SolrKey, SolrValue]
 
-  def prepForInsertion(typedMap: AssetSolrDocument): SolrInputDocument = {
-    val input = new SolrInputDocument
-    typedMap.foreach{case(key,value) => input.addField(key.resolvedName,value.value)}
-    input
-  }
-
   def server: Option[SolrServer] = Play.maybeApplication.flatMap { app =>
     app.plugin[SolrPlugin].filter(_.enabled).map{_.server}
   }
 
-  private[solr] def getNewEmbeddedServer(solrHome: String) = {
+  private[solr] def getNewEmbeddedServer = {
+    val solrHome = SolrConfig.embeddedSolrHome
     System.setProperty("solr.solr.home",solrHome) // (╯°□°)╯︵ɐʌɐɾ
     val initializer = new CoreContainer.Initializer()
     val coreContainer = initializer.initialize()
@@ -56,21 +51,20 @@ object Solr {
     new EmbeddedSolrServer(coreContainer, "")
   }
 
-  private[solr] def getNewRemoteServer(remoteUrl: URL) = {
+  private[solr] def getNewRemoteServer = {
     //out-of-the-box config from solrj wiki
+    //http://wiki.apache.org/solr/Solrj#Changing_other_Connection_Settings
     Logger.logger.debug("Using external Solr Server")
-    val server = new HttpSolrServer(remoteUrl.toString);
+    val server = new HttpSolrServer(SolrConfig.externalUrl.get.toString);
     Logger.logger.debug("test")
-    server.setSoTimeout(1000);  // socket read timeout
-    server.setConnectionTimeout(100);
-    server.setDefaultMaxConnectionsPerHost(100);
-    server.setMaxTotalConnections(100);
-    server.setFollowRedirects(false);  // defaults to false
-    // allowCompression defaults to false.
-    // Server side must support gzip or deflate for this to have any effect.
+    server.setSoTimeout(SolrConfig.socketTimeout);
+    server.setConnectionTimeout(SolrConfig.connectionTimeout);
+    server.setDefaultMaxConnectionsPerHost(SolrConfig.defaultMaxConnectionsPerHost);
+    server.setMaxTotalConnections(SolrConfig.maxTotalConnections);
+    server.setFollowRedirects(false);
     server.setAllowCompression(true);
-    server.setMaxRetries(1); // defaults to 0.  > 1 not recommended.
-    server.setParser(new XMLResponseParser()); // binary parser is used by default
+    server.setMaxRetries(1);
+    server.setParser(new XMLResponseParser());
     server
   }
 

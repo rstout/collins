@@ -1,4 +1,6 @@
-// No package name for Global class with play?
+import play.api._
+import play.api.mvc._
+import collins.database.DatabasePlugin
 
 import controllers.ApiResponse
 import play.api._
@@ -20,7 +22,7 @@ object Global extends GlobalSettings with AuthenticationAccessor with CryptoAcce
   }
 
   override def onRouteRequest(request: RequestHeader): Option[Handler] = {
-    if (request.path.startsWith("/api")) {
+    val response = if (request.path.startsWith("/api")) {
       Stats.apiRequest {
         super.onRouteRequest(request)
       }
@@ -31,6 +33,9 @@ object Global extends GlobalSettings with AuthenticationAccessor with CryptoAcce
     } else {
       super.onRouteRequest(request)
     }
+
+    Play.maybeApplication.flatMap{_.plugin[DatabasePlugin]}.filter{_.enabled}.foreach{_.closeConnection}
+    response
   }
 
   override def onError(request: RequestHeader, ex: Throwable): Result = {

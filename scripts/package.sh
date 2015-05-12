@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 if [ -z "$1" ]; then
   DEBUG=0
 else
@@ -8,7 +10,12 @@ else
 fi
 
 if [ -z "$PLAY_CMD" ]; then
-  PLAY_CMD="$HOME/src/play-2.0.3/play";
+  PLAY_CMD="$HOME/src/play-2.0.8/play";
+fi
+
+if [ ! -f $PLAY_CMD ]; then
+  echo "unable to find play command @ $PLAY_CMD"
+  exit 1
 fi
 
 if [ $DEBUG -eq 0 ]; then
